@@ -1,0 +1,16 @@
+{
+  "name": "JSON Importer",
+  "description": "Easily import lists, cards, and checklists into your Trello board from a JSON file.",
+  "author": "Oetel",
+  "icon": {
+    "url": "https://cdn-icons-png.flaticon.com/512/1680/1680899.png"
+  },
+  "capabilities": [
+    "board-buttons"
+  ],
+  "connectors": [],
+  "permissions": [],
+  "api": {
+    "url": "https://oetel.github.io/trello-json-importer/"
+  }
+}
