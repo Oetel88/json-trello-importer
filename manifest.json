@@ -15,10 +15,10 @@
     }
   },
   "connectors": {},
-  "url": "https://jouw-vercel-url.vercel.app",
+  "url": "https://oetel88.github.io/json-trello-importer/",
   "icon": {
     "url": "https://cdn-icons-png.flaticon.com/512/1680/1680899.png",
     "title": "Importeer"
   },
-  "iframeConnectorUrl": "https://jouw-vercel-url.vercel.app"
+  "iframeConnectorUrl": "https://oetel88.github.io/json-trello-importer/"
 }
