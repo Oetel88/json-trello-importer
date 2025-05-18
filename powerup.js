@@ -1,6 +1,4 @@
-var Promise = TrelloPowerUp.Promise;
-
-window.TrelloPowerUp.initialize({
+TrelloPowerUp.initialize({
   'board-buttons': function(t) {
     return [{
       icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680899.png',
