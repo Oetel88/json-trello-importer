@@ -25,7 +25,7 @@
   <button onclick="importCards()">Import JSON</button>
 
   <script>
-    var token = "";
+    let token = "";
     const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
     const authUrl = `https://trello.com/1/authorize?expiration=never&name=Quorum%20Importer&scope=read,write&response_type=token&key=${apiKey}`;
     document.getElementById("generateTokenLink").href = authUrl;
