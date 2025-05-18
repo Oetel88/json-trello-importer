@@ -43,7 +43,7 @@
     }
 
     async function importCards() {
-      const token = localStorage.getItem("trelloToken");
+      token = localStorage.getItem("trelloToken");
       if (!token) {
         alert("You have not saved a Trello token yet.");
         return;
