@@ -1,0 +1,24 @@
+{
+  "name": "JSON 2 Trello importer",
+  "description": "Importeer kaarten en checklists uit een JSON-bestand in Trello",
+  "author": "Jouw Naam",
+  "capabilities": {
+    "board-buttons": [
+      {
+        "text": "Importeer JSON",
+        "callback": "importJsonButton"
+      }
+    ],
+    "show-settings": {
+      "url": "./index.html",
+      "height": 200
+    }
+  },
+  "connectors": {},
+  "url": "https://jouw-vercel-url.vercel.app",
+  "icon": {
+    "url": "https://cdn-icons-png.flaticon.com/512/1680/1680899.png",
+    "title": "Importeer"
+  },
+  "iframeConnectorUrl": "https://jouw-vercel-url.vercel.app"
+}
