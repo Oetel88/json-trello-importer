@@ -7,7 +7,7 @@
   <script src="https://p.trellocdn.com/power-up.min.js"></script>
 </head>
 <body>
-  <h2>Quorum JSON Importer</h2>
+  <h2>JSON Trello importer</h2>
 
   <p>
     <strong>Step 1:</strong>
@@ -25,17 +25,24 @@
   <button onclick="importCards()">Import JSON</button>
 
   <script>
-    let token = "";
     const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
     const authUrl = `https://trello.com/1/authorize?expiration=never&name=Quorum%20Importer&scope=read,write&response_type=token&key=${apiKey}`;
     document.getElementById("generateTokenLink").href = authUrl;
 
     const t = TrelloPowerUp.iframe();
 
+    // Load saved token into input field when popup opens
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedToken = localStorage.getItem("trelloToken");
+      if (savedToken) {
+        document.getElementById("tokenInput").value = savedToken;
+      }
+    });
+
     function saveToken() {
-      token = document.getElementById("tokenInput").value.trim();
-      if (token) {
-        localStorage.setItem("trelloToken", token);
+      const newToken = document.getElementById("tokenInput").value.trim();
+      if (newToken && newToken.length > 10) {
+        localStorage.setItem("trelloToken", newToken);
         alert("Token saved!");
       } else {
         alert("Please paste a valid token.");
@@ -43,9 +50,9 @@
     }
 
     async function importCards() {
-      token = localStorage.getItem("trelloToken");
-      if (!token) {
-        alert("You have not saved a Trello token yet.");
+      const token = localStorage.getItem("trelloToken");
+      if (!token || token.length < 10) {
+        alert("Missing or invalid Trello token.");
         return;
       }
 
