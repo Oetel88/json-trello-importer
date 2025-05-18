@@ -5,8 +5,7 @@
   "capabilities": {
     "board-buttons": [
       {
-        "text": "Importeer JSON",
-        "callback": "board-buttons"
+        "text": "Importeer JSON"
       }
     ],
     "show-settings": {
