@@ -18,7 +18,7 @@
     async function importCards() {
 
       const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
-      const token = "5284a07228988155c41daa8c4524092b3db9b6bba640c8c122f8a286fb022c9b";
+      const token = "";
       
       if (!apiKey || !token) {
         alert('Geen geldige API key / Token');
@@ -49,6 +49,7 @@
       const listMap = {};
       const context = await t.getContext();
       const boardId = context.board;
+      console.log("Board ID from context:", boardId);
 
       for (const list of json.lists) {
         const createdList = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?name=${encodeURIComponent(list.name)}&pos=bottom&key=${apiKey}&token=${token}`, {
