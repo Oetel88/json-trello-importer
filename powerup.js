@@ -6,7 +6,7 @@ TrelloPowerUp.initialize({
       callback: function(t) {
         return t.popup({
           title: 'JSON import',
-          url: 'index.html',
+          url: 'import.html',
           height: 250
         });
       }
