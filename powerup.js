@@ -2,13 +2,14 @@ TrelloPowerUp.initialize({
   'board-buttons': function(t) {
     return [{
       icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680899.png',
-      text: 'Importeer JSON',
+      text: 'Import JSON',
       callback: function(t) {
-        return t.popup({
-          title: 'JSON import',
+        return t.modal({
           url: 'import.html',
-          height: 350,
-          width: 550
+          accentColor: '#0079BF',
+          height: 600,
+          fullscreen: false,
+          title: 'JSON Import'
         });
       }
     }];
