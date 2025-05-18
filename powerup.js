@@ -1,7 +1,9 @@
-/* powerup.js */
+var Promise = TrelloPowerUp.Promise;
+
 window.TrelloPowerUp.initialize({
-  'board-buttons': function(t, options) {
+  'board-buttons': function(t) {
     return [{
+      icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680899.png',
       text: 'Importeer JSON',
       callback: function(t) {
         return t.popup({
