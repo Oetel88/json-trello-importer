@@ -7,7 +7,8 @@ TrelloPowerUp.initialize({
         return t.popup({
           title: 'JSON import',
           url: 'import.html',
-          height: 250
+          height: 350,
+          width: 550
         });
       }
     }];
