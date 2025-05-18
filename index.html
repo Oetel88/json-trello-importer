@@ -7,5 +7,79 @@
 <body>
   <script src="https://p.trellocdn.com/power-up.min.js"></script>
   <script src="powerup.js"></script>
+
+
+  <h2>Quorum JSON Importer</h2>
+  <input type="file" id="jsonInput" accept="application/json" />
+  <button onclick="importCards()">Importeer JSON</button>
+
+  <script>
+    const t = TrelloPowerUp.iframe();
+
+    async function importCards() {
+
+      const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
+      const token = "5284a07228988155c41daa8c4524092b3db9b6bba640c8c122f8a286fb022c9b";
+      
+      if (!apiKey || !token) {
+        alert('Geen geldige API key / Token');
+        return;
+      }
+
+      const fileInput = document.getElementById('jsonInput');
+      if (!fileInput.files.length) {
+        alert('Selecteer een JSON-bestand.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const text = await file.text();
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        alert('Ongeldig JSON-bestand');
+        return;
+      }
+
+      if (!json.cards || !json.checklists || !json.lists) {
+        alert('JSON mist vereiste velden: cards, checklists, lists');
+        return;
+      }
+
+      const listMap = {};
+      const context = await t.getContext();
+      const boardId = context.board;
+
+      for (const list of json.lists) {
+        const createdList = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?name=${encodeURIComponent(list.name)}&pos=bottom&key=${apiKey}&token=${token}`, {
+          method: 'POST'
+        }).then(res => res.json());
+        listMap[list.id] = createdList.id;
+      }
+
+      for (const card of json.cards) {
+        const listId = listMap[card.idList];
+        const newCard = await fetch(`https://api.trello.com/1/cards?name=${encodeURIComponent(card.name)}&idList=${listId}&key=${apiKey}&token=${token}`, {
+          method: 'POST'
+        }).then(res => res.json());
+
+        const checklist = json.checklists.find(c => c.idCard === card.id);
+        if (checklist) {
+          const createdChecklist = await fetch(`https://api.trello.com/1/cards/${newCard.id}/checklists?name=${encodeURIComponent(checklist.name)}&key=${apiKey}&token=${token}`, {
+            method: 'POST'
+          }).then(res => res.json());
+
+          for (const item of checklist.checkItems) {
+            await fetch(`https://api.trello.com/1/checklists/${createdChecklist.id}/checkItems?name=${encodeURIComponent(item.name)}&checked=false&key=${apiKey}&token=${token}`, {
+              method: 'POST'
+            });
+          }
+        }
+      }
+
+      alert('Import voltooid!');
+    }
+  </script>
 </body>
 </html>
