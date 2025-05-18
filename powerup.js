@@ -7,7 +7,7 @@ TrelloPowerUp.initialize({
         return t.modal({
           url: 'import.html',
           accentColor: '#0079BF',
-          height: 600,
+          height: 450,
           fullscreen: false,
           title: 'JSON Import'
         });
