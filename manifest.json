@@ -1,7 +1,7 @@
 {
-  "name": "JSON 2 Trello importer",
+  "name": "JSON Trello importer",
   "description": "Importeer kaarten en checklists uit een JSON-bestand in Trello",
-  "author": "Jouw Naam",
+  "author": "Tim Lensen",
   "capabilities": {
     "board-buttons": [
       {
