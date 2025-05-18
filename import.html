@@ -7,27 +7,50 @@
   <script src="https://p.trellocdn.com/power-up.min.js"></script>
 </head>
 <body>
-  
   <h2>Quorum JSON Importer</h2>
+
+  <p>
+    <strong>Step 1:</strong>
+    <a href="#" id="generateTokenLink" target="_blank">Click here to generate your Trello token</a>
+  </p>
+
+  <p>
+    <strong>Step 2:</strong>
+    <input type="text" id="tokenInput" placeholder="Paste your Trello token here" style="width: 100%;" />
+    <button onclick="saveToken()">Save token</button>
+  </p>
+
+  <p><strong>Step 3:</strong> Select your JSON file and import.</p>
   <input type="file" id="jsonInput" accept="application/json" />
-  <button onclick="importCards()">Importeer JSON</button>
+  <button onclick="importCards()">Import JSON</button>
 
   <script>
+    const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
+    const authUrl = `https://trello.com/1/authorize?expiration=never&name=Quorum%20Importer&scope=read,write&response_type=token&key=${apiKey}`;
+    document.getElementById("generateTokenLink").href = authUrl;
+
     const t = TrelloPowerUp.iframe();
 
-    async function importCards() {
+    function saveToken() {
+      const token = document.getElementById("tokenInput").value.trim();
+      if (token) {
+        localStorage.setItem("trelloToken", token);
+        alert("Token saved!");
+      } else {
+        alert("Please paste a valid token.");
+      }
+    }
 
-      const apiKey = "7b86809c671ea8d2482e93353fcf39c1";
-      const token = "ATTA019dcd6161ef91db7bdc34e1f6be9e6774467dbe81d5dee37ed8825beca991f7BD59E1A8";
-      
-      if (!apiKey || !token) {
-        alert('Geen geldige API key / Token');
+    async function importCards() {
+      const token = localStorage.getItem("trelloToken");
+      if (!token) {
+        alert("You have not saved a Trello token yet.");
         return;
       }
 
       const fileInput = document.getElementById('jsonInput');
       if (!fileInput.files.length) {
-        alert('Selecteer een JSON-bestand.');
+        alert('Please select a JSON file.');
         return;
       }
 
@@ -37,48 +60,65 @@
       try {
         json = JSON.parse(text);
       } catch (e) {
-        alert('Ongeldig JSON-bestand');
+        alert('Invalid JSON file.');
         return;
       }
 
       if (!json.cards || !json.checklists || !json.lists) {
-        alert('JSON mist vereiste velden: cards, checklists, lists');
+        alert('JSON is missing required fields: cards, checklists, lists.');
         return;
       }
 
       const listMap = {};
       const context = await t.getContext();
       const boardId = context.board;
-      console.log("Board ID from context:", boardId);
 
       for (const list of json.lists) {
-        const createdList = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?name=${encodeURIComponent(list.name)}&pos=bottom&key=${apiKey}&token=${token}`, {
-          method: 'POST'
-        }).then(res => res.json());
-        listMap[list.id] = createdList.id;
-      }
-
-      for (const card of json.cards) {
-        const listId = listMap[card.idList];
-        const newCard = await fetch(`https://api.trello.com/1/cards?name=${encodeURIComponent(card.name)}&idList=${listId}&key=${apiKey}&token=${token}`, {
-          method: 'POST'
-        }).then(res => res.json());
-
-        const checklist = json.checklists.find(c => c.idCard === card.id);
-        if (checklist) {
-          const createdChecklist = await fetch(`https://api.trello.com/1/cards/${newCard.id}/checklists?name=${encodeURIComponent(checklist.name)}&key=${apiKey}&token=${token}`, {
+        try {
+          const res = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?name=${encodeURIComponent(list.name)}&pos=bottom&key=${apiKey}&token=${token}`, {
             method: 'POST'
-          }).then(res => res.json());
-
-          for (const item of checklist.checkItems) {
-            await fetch(`https://api.trello.com/1/checklists/${createdChecklist.id}/checkItems?name=${encodeURIComponent(item.name)}&checked=false&key=${apiKey}&token=${token}`, {
-              method: 'POST'
-            });
-          }
+          });
+          if (!res.ok) throw new Error(await res.text());
+          const createdList = await res.json();
+          listMap[list.id] = createdList.id;
+        } catch (err) {
+          console.error("Error creating list:", err);
+          alert("Error creating list: " + err);
+          return;
         }
       }
 
-      alert('Import voltooid!');
+      for (const card of json.cards) {
+        try {
+          const listId = listMap[card.idList];
+          const resCard = await fetch(`https://api.trello.com/1/cards?name=${encodeURIComponent(card.name)}&idList=${listId}&key=${apiKey}&token=${token}`, {
+            method: 'POST'
+          });
+          if (!resCard.ok) throw new Error(await resCard.text());
+          const newCard = await resCard.json();
+
+          const checklist = json.checklists.find(c => c.idCard === card.id);
+          if (checklist) {
+            const resChecklist = await fetch(`https://api.trello.com/1/cards/${newCard.id}/checklists?name=${encodeURIComponent(checklist.name)}&key=${apiKey}&token=${token}`, {
+              method: 'POST'
+            });
+            if (!resChecklist.ok) throw new Error(await resChecklist.text());
+            const createdChecklist = await resChecklist.json();
+
+            for (const item of checklist.checkItems) {
+              await fetch(`https://api.trello.com/1/checklists/${createdChecklist.id}/checkItems?name=${encodeURIComponent(item.name)}&checked=false&key=${apiKey}&token=${token}`, {
+                method: 'POST'
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Error creating card or checklist:", err);
+          alert("Error creating card or checklist: " + err);
+          return;
+        }
+      }
+
+      alert('Import completed!');
     }
   </script>
 </body>
