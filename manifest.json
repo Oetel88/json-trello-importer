@@ -6,7 +6,7 @@
     "board-buttons": [
       {
         "text": "Importeer JSON",
-        "callback": "importJsonButton"
+        "callback": "board-buttons"
       }
     ],
     "show-settings": {
